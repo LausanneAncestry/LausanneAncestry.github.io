@@ -1,4 +1,4 @@
-;father_first_name;father_last_name;father_id;father_job;father_census_entries;son_first_name;son_last_name;son_id;son_job;son_census_entries
+pair_id;father_first_name;father_last_name;father_id;father_job;father_census_entries;son_first_name;son_last_name;son_id;son_job;son_census_entries
 0;henri;Manuel;871;{'gociant', 'confiseur'};[2376, 12608, 35768];henri;manuel;406;;[35769]
 1;george;Favrat;1;{'procureur'};[1, 9629];louis;Favrat;615;{'tuteur'};[2, 9628, 31757]
 2;george;Favrat;1;{'procureur'};[1, 9629];louise;Favrat;616;{'rentiere'};[3, 16079]
