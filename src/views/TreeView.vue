@@ -72,5 +72,7 @@ fetchAndParseCSV(CSV_URL)
 	  </select>
 
     <FamilyTree :person="persons[selectedPerson]" /> 
+
+    <FamilyTree v-for="person in rootPersons" :person="person" /> 
   </main>
 </template>
