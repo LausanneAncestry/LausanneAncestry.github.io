@@ -5,7 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
 <header class="sticky top-0 z-50 bg-white shadow-md">
 	<nav class="container mx-auto flex items-center justify-between p-4">
-		<a href="#" class="text-xl font-bold">Meesa Navbar</a>
+		<a href="#" class="text-xl font-bold">Lausanne Ancestry</a>
 		<ul class="flex space-x-4">
       <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/tree">Tree Viewer</RouterLink>
