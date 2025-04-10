@@ -1,54 +1,147 @@
-<script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-import * as d3 from "d3";
-import * as Plot from "@observablehq/plot";
-import { Person } from "@/utils/person";
+<template>
+	<div ref="treeContainer" class="relative" :style="{ width: `${width}px`, height: `${height}px` }">
+		<!-- SVG links -->
+		<svg :width="width" :height="height" class="absolute top-0 left-0 pointer-events-none">
+			<g>
+				<path v-for="link in links" :key="link.target.data.id" :d="generatePath(link)"
+					class="stroke-gray-300 fill-none" stroke-width="2" />
+			</g>
+		</svg>
 
-const props = defineProps<{ person: Person | undefined }>();
-const plotContainer = ref<HTMLElement | null>(null);
+		<!-- HTML Nodes -->
+		<div v-for="node in nodes" :key="node.data.id">
+			<RouterLink :to="{ name: 'person', params: { id: node.data.id } }">
+				<div :style="{ position: 'absolute', top: `${node.y}px`, left: `${node.x}px` }"
+					class="bg-white border shadow-md rounded-xl p-4 inline-block cursor-pointer"
+					:ref="(el: any) => nodeRefs.set(node.data.id, el)">
+					<TooltipDiv
+						:messages="Object.entries(node.data.rawNames).map(([key, value]) => `${key}: ${value}`)">
+						<h3 class="text-base font-bold w-full">{{ node.data.firstName }} {{ node.data.lastName }}</h3>
+					</TooltipDiv>
+					<TooltipDiv
+						:messages="Object.entries(node.data.rawBirthYears).map(([key, value]) => `${key}: ${value}`)">
+						<p class="text-sm text-gray-600 w-full whitespace-nowrap">Année de naissance: {{
+							node.data.birthYears.length !== 0 ? node.data.birthYears.join(", ") : "Non renseignée" }}
+						</p>
+					</TooltipDiv>
+					<TooltipDiv
+						:messages="Object.entries(node.data.rawOrigins).map(([key, value]) => `${key}: ${value}`)">
+						<p class="text-sm text-gray-600 w-full whitespace-nowrap">Origine: {{ node.data.origins.length
+							!== 0 ?
+							node.data.origins.join(", ") : "Non renseignée" }}</p>
+					</TooltipDiv>
+					<TooltipDiv :messages="Object.entries(node.data.rawJobs).map(([key, value]) => `${key}: ${value}`)">
+						<p class="text-sm text-gray-600 w-full whitespace-nowrap">Emplois: {{ node.data.jobs.length !==
+							0 ?
+							node.data.jobs.join(", ") : "Aucun" }}</p>
+					</TooltipDiv>
+					<p class="text-sm text-gray-600 w-full whitespace-nowrap">Recensé en: {{
+						node.data.censusYears.join(", ") }}
+					</p>
+				</div>
+			</RouterLink>
+		</div>
 
-function drawTree(person: Person | undefined) {
-	if (!person) return
-	function getAllNestedPersons(person: Person, prefix: string): string[] {
-		const name = `${person.first_name} ${person.last_name}\n${person.job}`
-		const r = [prefix + name]
-		person.children.forEach(children => {
-			r.push(...getAllNestedPersons(children, prefix + name + "/"))
-		})
-		return r
-	}
+		<!-- <div v-for="node in nodes" :key="node.data.id" :ref="(el: any) => nodeRefs.set(node.data.id, el)"
+			:style="{ position: 'absolute', top: `${node.y}px`, left: `${node.x}px` }"
+			class="bg-white border shadow-md rounded-xl p-4 inline-block cursor-pointer">
+			<TooltipDiv :messages="Object.entries(node.data.rawNames).map(([key, value]) => `${key}: ${value}`)">
+				<RouterLink :to="{ name: 'person', params: { id: node.data.id } }">
+					<h3 class="text-base font-bold w-full">{{ node.data.firstName }} {{ node.data.lastName }}</h3>
+				</RouterLink>
+			</TooltipDiv>
+			<TooltipDiv :messages="Object.entries(node.data.rawBirthYears).map(([key, value]) => `${key}: ${value}`)">
+				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Année de naissance: {{
+					node.data.birthYears.length !== 0 ? node.data.birthYears.join(", ") : "Non renseignée" }}</p>
+			</TooltipDiv>
+			<TooltipDiv :messages="Object.entries(node.data.rawOrigins).map(([key, value]) => `${key}: ${value}`)">
+				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Origine: {{ node.data.origins.length !== 0 ?
+					node.data.origins.join(", ") : "Non renseignée" }}</p>
+			</TooltipDiv>
+			<TooltipDiv :messages="Object.entries(node.data.rawJobs).map(([key, value]) => `${key}: ${value}`)">
+				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Emplois: {{ node.data.jobs.length !== 0 ?
+					node.data.jobs.join(", ") : "Aucun" }}</p>
+			</TooltipDiv>
+			<p class="text-sm text-gray-600 w-full whitespace-nowrap">Recensé en: {{ node.data.censusYears.join(", ") }}
+			</p>
+	</div> -->
+	</div>
+</template>
 
-	const persons: string[] = getAllNestedPersons(person, "")
+<script lang="ts" setup>
+import { ref, onMounted, nextTick, watch } from 'vue'
+import * as d3 from 'd3'
+import type { Person } from '@/utils/person';
+import TooltipDiv from './TooltipDiv.vue';
 
-	const tree = Plot.plot({
-		axis: null,
-		height: 120,
-		inset: 20,
-		marginLeft: 100,
-		insetLeft: 40,
-		insetRight: 120,
-		marks: [
-			Plot.link(persons, Plot.treeLink({ stroke: "node:internal" })),
-			Plot.dot(persons, Plot.treeNode({ fill: "node:internal" })),
-			Plot.text(persons, Plot.treeNode({ text: "node:name", stroke: "white", fill: "currentColor", dx: 6, treeFilter: "node:external" })),
-			Plot.text(persons, Plot.treeNode({ text: "node:name", stroke: "white", fill: "currentColor", textAnchor: "end", dx: -6, treeFilter: "node:internal" }))
-		]
+const props = defineProps<{ rootPerson: Person | undefined }>();
+
+const width = ref(999999)
+const height = ref(999999)
+const treeContainer = ref<HTMLDivElement | null>(null)
+const nodeRefs = new Map<string, HTMLElement>()
+
+const nodes = ref<d3.HierarchyPointNode<Person>[]>([])
+const links = ref<d3.HierarchyPointLink<Person>[]>([])
+
+async function drawTree(rootPerson: Person | undefined) {
+	if (!rootPerson) return
+
+	// Step 1: Build hierarchy + d3 tree
+	const root = d3.hierarchy(rootPerson)
+	const treeLayout = d3.tree<Person>()
+		.nodeSize([250, 180]) // base spacing
+	treeLayout(root)
+
+	// Step 2: Set initial node/links
+	// @ts-ignore
+	nodes.value = root.descendants()
+	// @ts-ignore
+	links.value = root.links()
+
+	await nextTick()
+
+	// Step 3: Measure HTML nodes & adjust layout
+	nodes.value.forEach(node => {
+		const el = nodeRefs.get(node.data.id)
+		if (el) {
+			const { offsetWidth, offsetHeight } = el
+			node.x = node.x - offsetWidth / 2
+			node.y = node.y // vertical stays, or you can offset here
+		}
 	})
 
+	const minX = Math.min(...nodes.value.map(n => n.x))
+	nodes.value.forEach(node => {
+		node.x = node.x - minX
+	})
 
-	if (plotContainer.value) {
-		plotContainer.value.innerHTML = ""
-		plotContainer.value.appendChild(tree)
-	}
+	// Step 4: recompute bounding box
+	const maxX = Math.max(...nodes.value.map(n => n.x + (nodeRefs.get(n.data.id)?.offsetWidth || 0)))
+	const maxY = Math.max(...nodes.value.map(n => n.y + (nodeRefs.get(n.data.id)?.offsetHeight || 0)))
+	width.value = maxX
+	height.value = maxY + 10
+}
+
+function generatePath(link: d3.HierarchyPointLink<Person>) {
+	const sx = link.source.x + getNodeWidth(link.source.data.id) / 2
+	const sy = link.source.y + getNodeHeight(link.source.data.id)
+	const tx = link.target.x + getNodeWidth(link.target.data.id) / 2
+	const ty = link.target.y
+	return `M${sx},${sy} C${sx},${(sy + ty) / 2} ${tx},${(sy + ty) / 2} ${tx},${ty}`
+}
+
+function getNodeWidth(id: string) {
+	return nodeRefs.get(id)?.offsetWidth || 100
+}
+
+function getNodeHeight(id: string) {
+	return nodeRefs.get(id)?.offsetHeight || 60
 }
 
 onMounted(() => {
-	if (props.person) drawTree(props.person)
+	if (props.rootPerson) drawTree(props.rootPerson)
 })
 
-watch(() => props.person, drawTree)
+watch(() => props.rootPerson, drawTree)
 </script>
-
-<template>
-	<div ref="plotContainer"></div>
-</template>

@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { ref, provide } from 'vue'
+import { loadPersons, Person, type PersonMap } from './utils/person'
+
+const persons = ref<PersonMap>({})
+const rootPersons = ref<Person[]>([])
+provide('persons', persons)
+provide('rootPersons', rootPersons)
+
+loadPersons().then(loadedPersons => {
+  persons.value = loadedPersons
+  rootPersons.value = Object.values(loadedPersons).filter(person => !person.parentId)
+})
 </script>
 
 <template>
@@ -13,16 +25,6 @@ import { RouterLink, RouterView } from 'vue-router'
 		</ul>
 	</nav>
 </header>
-
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/tree">Tree Viewer</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
 
   <RouterView />
 </template>
