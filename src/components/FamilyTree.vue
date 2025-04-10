@@ -12,7 +12,8 @@
 		<div v-for="node in nodes" :key="node.data.id">
 			<RouterLink :to="{ name: 'person', params: { id: node.data.id } }">
 				<div :style="{ position: 'absolute', top: `${node.y}px`, left: `${node.x}px` }"
-					class="bg-white border shadow-md rounded-xl p-4 inline-block cursor-pointer"
+					class="border shadow-md rounded-xl p-4 inline-block cursor-pointer"
+					:class="{ 'bg-gray-100': node.data.id === props.rootPerson?.id, 'bg-white':  node.data.id !== props.rootPerson?.id }"
 					:ref="(el: any) => nodeRefs.set(node.data.id, el)">
 					<TooltipDiv
 						:messages="Object.entries(node.data.rawNames).map(([key, value]) => `${key}: ${value}`)">
@@ -41,30 +42,6 @@
 				</div>
 			</RouterLink>
 		</div>
-
-		<!-- <div v-for="node in nodes" :key="node.data.id" :ref="(el: any) => nodeRefs.set(node.data.id, el)"
-			:style="{ position: 'absolute', top: `${node.y}px`, left: `${node.x}px` }"
-			class="bg-white border shadow-md rounded-xl p-4 inline-block cursor-pointer">
-			<TooltipDiv :messages="Object.entries(node.data.rawNames).map(([key, value]) => `${key}: ${value}`)">
-				<RouterLink :to="{ name: 'person', params: { id: node.data.id } }">
-					<h3 class="text-base font-bold w-full">{{ node.data.firstName }} {{ node.data.lastName }}</h3>
-				</RouterLink>
-			</TooltipDiv>
-			<TooltipDiv :messages="Object.entries(node.data.rawBirthYears).map(([key, value]) => `${key}: ${value}`)">
-				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Année de naissance: {{
-					node.data.birthYears.length !== 0 ? node.data.birthYears.join(", ") : "Non renseignée" }}</p>
-			</TooltipDiv>
-			<TooltipDiv :messages="Object.entries(node.data.rawOrigins).map(([key, value]) => `${key}: ${value}`)">
-				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Origine: {{ node.data.origins.length !== 0 ?
-					node.data.origins.join(", ") : "Non renseignée" }}</p>
-			</TooltipDiv>
-			<TooltipDiv :messages="Object.entries(node.data.rawJobs).map(([key, value]) => `${key}: ${value}`)">
-				<p class="text-sm text-gray-600 w-full whitespace-nowrap">Emplois: {{ node.data.jobs.length !== 0 ?
-					node.data.jobs.join(", ") : "Aucun" }}</p>
-			</TooltipDiv>
-			<p class="text-sm text-gray-600 w-full whitespace-nowrap">Recensé en: {{ node.data.censusYears.join(", ") }}
-			</p>
-	</div> -->
 	</div>
 </template>
 

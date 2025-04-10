@@ -18,6 +18,8 @@ if (!persons || !rootPersons) {
   <main class="flex flex-col items-center gap-10">
     <h1 class="text-3xl font-bold mt-10">Arbres Généalogiques</h1>
 
-    <FamilyTree :root-person="person" v-for="person in rootPersons" />
+    <div class="flex flex-wrap gap-16 m-8 justify-center">
+      <FamilyTree :root-person="person" v-for="person in rootPersons" />
+    </div>
   </main>
 </template>
