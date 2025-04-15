@@ -12,7 +12,7 @@
 		<div v-for="node in nodes" :key="node.data.id">
 			<RouterLink :to="{ name: 'person', params: { id: node.data.id } }">
 				<div :style="{ position: 'absolute', top: `${node.y}px`, left: `${node.x}px` }"
-					class="border shadow-md rounded-xl p-4 inline-block cursor-pointer"
+					class="border shadow-md rounded-xl p-4 inline-block cursor-pointer hover:z-50"
 					:class="{ 'bg-gray-100': node.data.id === props.rootPerson?.id, 'bg-white':  node.data.id !== props.rootPerson?.id }"
 					:ref="(el: any) => nodeRefs.set(node.data.id, el)">
 					<TooltipDiv
