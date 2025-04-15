@@ -5,7 +5,7 @@ const props = defineProps<{
 </script>
 
 <template>
-	<div class="group relative flex-col">
+	<div class="group relative flex-col w-fit">
 		<div>
 			<slot></slot>
 		</div>

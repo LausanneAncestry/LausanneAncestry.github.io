@@ -17,6 +17,9 @@ const person = computed(() => persons?.value[props.id])
 <template>
 	<div class="flex flex-col gap-9 m-8" v-if="person">
 		<h1 class="text-xl font-bold">{{ person.name }}#{{ person.id }}</h1>
+		<RouterLink :to="{ name: 'person', params: { id: person.parentId } }" v-if="person.parentId">
+			<h3 class="underline">Lien vers le parent</h3>
+		</RouterLink>
 		<div class="overflow-x-auto shadow-md rounded-lg">
 			<table class="min-w-full bg-white">
 				<thead class="bg-gray-800 text-white">

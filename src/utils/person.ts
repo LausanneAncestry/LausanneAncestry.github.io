@@ -161,7 +161,7 @@ export async function loadPersons(): Promise<PersonMap> {
 
 			people.forEach(person => {
 				if (person.parentId) {
-					person.parent = peopleMap[person.id]
+					person.parent = peopleMap[person.parentId]
 					peopleMap[person.parentId].children.push(person)
 				}
 			})
