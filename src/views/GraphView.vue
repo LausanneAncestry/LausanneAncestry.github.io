@@ -1,9 +1,30 @@
 <template>
     <div class="chart-container">
       <h2 class="chart-title">
-        Professional Responsibilities of the 2nd Generation relative to those of the 1st Generation.
+        Professional Responsibilities
       </h2>
+      <h3 class="chart-subtitle">
+        of the 2nd Generation relative to those of the 1st Generation
+      </h3>
       <svg class="chart" ref="svgRef"></svg>
+    </div>
+    <div class="chart-container">
+      <h2 class="chart-title">
+        Training Duration
+      </h2>
+      <h3 class="chart-subtitle">
+        of the 2nd Generation relative to those of the 1st Generation
+      </h3>
+      <svg class="chart" ref=""></svg>
+    </div>
+    <div class="chart-container">
+      <h2 class="chart-title">
+        Job Physicality
+      </h2>
+      <h3 class="chart-subtitle">
+        of the 2nd Generation relative to those of the 1st Generation
+      </h3>
+      <svg class="chart" ref=""></svg>
     </div>
   </template>
   
@@ -77,17 +98,17 @@
   ]
   
   const yCategories = [
-    'higher than 1st generation',
-    'identical to 1st generation',
-    'lower than 1st generation'
+    'higher',
+    'identical',
+    'lower'
   ] as const
   
   type YCategory = typeof yCategories[number]
   
   function responsibilityCategory(p: Person): YCategory {
-    if (p.job_hierarchy === 'boss' && p.father_job_hierarchy === 'worker') return 'higher than 1st generation'
-    if (p.job_hierarchy === 'worker' && p.father_job_hierarchy === 'boss') return 'lower than 1st generation'
-    return 'identical to 1st generation'
+    if (p.job_hierarchy === 'boss' && p.father_job_hierarchy === 'worker') return 'higher'
+    if (p.job_hierarchy === 'worker' && p.father_job_hierarchy === 'boss') return 'lower'
+    return 'identical'
   }
   function responsibilityValue(p: Person): number {
     if (p.job_hierarchy === 'boss' && p.father_job_hierarchy === 'worker') return 1
@@ -219,9 +240,9 @@
     // --- Error Bars ---
     function yFromMean(mean: number) {
       // -1: lower, 0: identical, 1: higher
-      const y0 = y('lower than 1st generation')!
-      const y1 = y('identical to 1st generation')!
-      const y2 = y('higher than 1st generation')!
+      const y0 = y('lower')!
+      const y1 = y('identical')!
+      const y2 = y('higher')!
       return d3.scaleLinear().domain([-1, 0, 1]).range([y0, y1, y2])(mean)
     }
   
@@ -274,16 +295,22 @@ z-index: 1000;
 .chart-container {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0px 32px;
   padding: 24px 0;
 }
 
 .chart-title {
-  text-align: center;
+  text-align: left;
   font-size: 2.2rem;
   font-weight: bold;
-  margin-bottom: 32px;
+  
   margin-top: 0;
+}
+
+.chart-subtitle {
+  text-align: left;
+  font-size: 1rem;
+  margin-bottom: 32px;
 }
 
 .chart {
