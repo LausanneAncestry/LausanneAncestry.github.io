@@ -1,25 +1,28 @@
 <template>
-    <div>
-      <h2>Relative professional responsibilities exerted by the second generation relative to the first generations</h2>
-      <svg ref="svgRef"></svg>
+    <div class="chart-container">
+      <h2 class="chart-title">
+        Professional Responsibilities of the 2nd Generation relative to those of the 1st Generation.
+      </h2>
+      <svg class="chart" ref="svgRef"></svg>
     </div>
   </template>
   
-<script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import * as d3 from 'd3'
   
-interface Person {
+<script lang="ts" setup>
+  import { ref, onMounted, onBeforeUnmount } from 'vue'
+  import * as d3 from 'd3'
+  
+  interface Person {
     id: string
     job?: string
     job_hierarchy?: 'worker' | 'boss'
     year_appear: number
     father_job?: string
     father_job_hierarchy?: 'worker' | 'boss'
-}
+  }
   
-//made up data for testing:
-const persons: Person[] = [
+  //made up data for testing:
+  const persons: Person[] = [
     { id: 'p1', job: 'Factory Owner', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Blacksmith', father_job_hierarchy: 'worker' },
     { id: 'p2', job: 'Clerk', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Merchant', father_job_hierarchy: 'boss' },
     { id: 'p3', job: 'Farmer', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Farmer', father_job_hierarchy: 'worker' },
@@ -71,7 +74,7 @@ const persons: Person[] = [
     { id: 'p48', job: 'Merchant', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Merchant', father_job_hierarchy: 'boss' },
     { id: 'p49', job: 'Factory Owner', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Factory Worker', father_job_hierarchy: 'worker' },
     { id: 'p50', job: 'Clerk', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Bank Manager', father_job_hierarchy: 'boss' },
-]
+  ]
   
   const yCategories = [
     'higher than 1st generation',
@@ -93,20 +96,25 @@ const persons: Person[] = [
   }
   
   const svgRef = ref<SVGSVGElement | null>(null)
-  
-  onMounted(() => {
+
+  function drawChart(years) {
     // --- Prepare Data ---
     const data = persons.map(p => ({
       ...p,
       resp_category: responsibilityCategory(p),
       resp_value: responsibilityValue(p)
     }))
-  
-    const years = [1835, 1855, 1875, 1890]
+
+    const container = svgRef.value?.parentElement
+    if (!container) return
+
+    const containerWidth = container.clientWidth
+    const containerHeight = 450 // or container.clientHeight if you want dynamic height
+
     const margin = { top: 40, right: 40, bottom: 60, left: 220 }
-    const width = 900 - margin.left - margin.right
-    const height = 450 - margin.top - margin.bottom
-  
+    const width = containerWidth - margin.left - margin.right
+    const height = containerHeight - margin.top - margin.bottom
+
     // --- Scales ---
     const x = d3.scaleLinear()
       .domain([1800, 1900])
@@ -119,8 +127,9 @@ const persons: Person[] = [
   
     // --- SVG Setup ---
     const svg = d3.select(svgRef.value)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
+
   
     svg.selectAll('*').remove() // Clear previous
   
@@ -206,10 +215,6 @@ const persons: Person[] = [
         tooltip.transition().duration(200).style('opacity', 0)
         d3.select(this).attr('stroke-width', 1.5)
     })
-
-// --- Legend REMOVED ---
-// (Delete or comment out the entire legend block)
-
   
     // --- Error Bars ---
     function yFromMean(mean: number) {
@@ -248,14 +253,44 @@ const persons: Person[] = [
       .attr('cy', d => yFromMean(d.mean))
       .attr('r', 6)
       .attr('fill', '#222')
-  
-    
-  })
-  </script>
-  
-  <style scoped>
-  .tooltip {
-    z-index: 1000;
   }
-  </style>
+  
+  onMounted(() => {
+    const years = [1835, 1855, 1875, 1890]
+    drawChart(years)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', drawChart)
+  })
+
+</script>
+
+<style scoped>
+.tooltip {
+z-index: 1000;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.chart-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 32px;
+  margin-top: 0;
+}
+
+.chart {
+    width: 100%;
+    height: 450px;
+    display: block;
+}
+
+</style>
   
