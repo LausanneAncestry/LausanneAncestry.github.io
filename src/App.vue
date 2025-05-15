@@ -22,6 +22,7 @@ loadPersons().then(loadedPersons => {
       <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/tree">Tree Viewer</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/graph">Data Analysis</RouterLink>
 		</ul>
 	</nav>
 </header>
