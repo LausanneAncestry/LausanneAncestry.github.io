@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import TreeView from '@/views/TreeView.vue'
+import TreeListView from '@/views/TreeListView.vue'
 import PersonView from '@/views/PersonView.vue'
+import JobListView from '@/views/JobListView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,15 +13,20 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/tree',
+      path: '/trees',
       name: 'tree',
-      component: TreeView,
+      component: TreeListView,
     },
     {
       path: '/user/:id',
       name: 'person',
       component: PersonView,
       props: true // This allows passing route params as props to the component
+    },
+    {
+      path: '/jobs',
+      name: 'jobs',
+      component: JobListView,
     },
     {
       path: '/about',

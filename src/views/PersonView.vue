@@ -27,7 +27,9 @@ const person = computed(() => data?.value.persons[props.id])
 			</h3>
 			<ul class="list-disc list-inside space-y-1 text-gray-700">
 				<li v-for="(jobId, index) in person.jobIds" :key="jobId">
-					{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}
+					<RouterLink :to="{ name: 'jobs', hash: `#job-${jobId}` }">
+						<h3 class="underline">{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}</h3>
+					</RouterLink>
 				</li>
 			</ul>
 		</div>

@@ -1,25 +1,5 @@
-function capitalizeFirstLetterOfEachWord(str: string): string {
-	return str.split(' ').map(word => {
-		return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-	}).join(' ').split('-').map(word => {
-		return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-	}).join('-');
-}
-
-function snakeToCamelCase(str: string): string {
-	return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
-		.replace(/^([A-Z])/, (match, letter) => letter.toLowerCase());
-}
-
-
-function transformToPascalCase<T>(obj: Record<string, any>): T {
-	const result: Record<string, any> = {};
-	Object.keys(obj).forEach(key => {
-		const pascalKey = snakeToCamelCase(key);
-		result[pascalKey] = obj[key];
-	});
-	return result as T;
-}
+import { Job } from "./job";
+import { capitalizeFirstLetterOfEachWord, fetchJsonData, mapDict, transformToPascalCase } from "./utils";
 
 export type CensusEntry = {
 	id: number,
@@ -41,18 +21,16 @@ export class Person {
 	readonly id: string;
 	readonly firstName: string;
 	readonly lastName: string;
-	readonly birthYear?: number;
 	readonly parentId?: number;
 	private _parent?: Person;
 	readonly censusEntries: readonly CensusEntry[];
 	readonly jobIds: readonly string[];
 	readonly children: Person[];
 
-	constructor(id: string, firstName: string, lastName: string, birthYear: number | undefined, parentId: number, censusEntries: readonly CensusEntry[], jobIds: readonly string[]) {
+	constructor(id: string, firstName: string, lastName: string, parentId: number, censusEntries: readonly CensusEntry[], jobIds: readonly string[]) {
 		this.id = id;
 		this.firstName = capitalizeFirstLetterOfEachWord(firstName);
 		this.lastName = capitalizeFirstLetterOfEachWord(lastName);
-		this.birthYear = birthYear;
 		this.parentId = parentId;
 		this.censusEntries = censusEntries;
 		this.jobIds = jobIds;
@@ -116,8 +94,6 @@ export class Person {
 	static fromJson(json: any): Person {
 		const { id, firstName, lastName, censusEntries, parent, jobIds } = transformToPascalCase(json) as any;
 
-		const birthYear = 3000;
-
 		// Convert censusEntries to CensusEntry[] if needed
 		const censusEntriesMapped: CensusEntry[] = censusEntries.map((entry: any) => transformToPascalCase<CensusEntry>(entry));
 		censusEntriesMapped.forEach(entry => {
@@ -126,33 +102,14 @@ export class Person {
 
 		// Create a new Person instance
 		const person = new Person(
-			id, firstName, lastName, birthYear, parent, censusEntriesMapped, jobIds
+			id, firstName, lastName, parent, censusEntriesMapped, jobIds
 		);
 
 		return person;
 	}
 }
 
-export interface Job {
-	id: string
-	job: string
-}
-
-export async function fetchJsonData(url: string = "/tracked.json"): Promise<any> {
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error('Network response was not ok ' + response.statusText);
-		}
-
-		const data = await response.json();
-		return data;
-	} catch (error) {
-		throw error;
-	}
-}
-
-export type DataMap = { 
+export type DataMap = {
 	persons: { [key: string]: Person }
 	jobs: { [key: string]: Job }
 }
@@ -160,10 +117,14 @@ export async function loadData(): Promise<DataMap> {
 	return fetchJsonData()
 		.then(jsonData => {
 			const people: Person[] = jsonData["persons"].map((data: any) => Person.fromJson(data));
+			const jobs = mapDict(jsonData["jobs"], (key, value: any) => {
+				value["id"] = key;
+				return [key, Job.fromJson(value)]
+			})
 
 			const dataMap: DataMap = {
 				persons: {},
-				jobs: jsonData["jobs"]
+				jobs: jobs
 			}
 
 			people.forEach(person => {
@@ -183,6 +144,6 @@ export async function loadData(): Promise<DataMap> {
 		})
 		.catch(err => {
 			console.error("Error while fetching data:", err)
-			return {persons: {}, jobs: {}}
+			return { persons: {}, jobs: {} }
 		})
 }

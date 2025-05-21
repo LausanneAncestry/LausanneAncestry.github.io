@@ -23,10 +23,10 @@ loadData().then(loadedData => {
     <nav class="container mx-auto flex items-center justify-between p-4">
       <a href="#" class="text-xl font-bold">Lausanne Ancestry</a>
       <ul class="flex space-x-4">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/tree">Tree Viewer</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/graph">Data Analysis</RouterLink>
+        <RouterLink to="/">Accueil</RouterLink>
+        <RouterLink to="/trees">Arbres</RouterLink>
+        <RouterLink to="/jobs">Liste des emplois</RouterLink>
+        <RouterLink to="/graph">Analyse des données</RouterLink>
 		</ul>
 	</nav>
 </header>
