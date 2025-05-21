@@ -45,34 +45,19 @@ function scroll() {
     }, 300)
   }
 }
-// const route = useRoute()
-
-// onMounted(() => {
-//   if (route.hash) {
-//     setTimeout(async () => {
-//       await nextTick()
-//       let el = document.querySelector(route.hash)
-//       console.log(el)
-//       if (el) {
-//         el.scrollIntoView({ behavior: 'smooth' })
-//       }
-//     }, 300)
-//   }
-// })
 </script>
 
 <template>
   <main class="flex flex-col items-center">
     <h1 class="text-3xl font-bold mt-10">Liste des emplois</h1>
 
-    <p>Nombre d'emplois: {{ data.jobs.length }}</p>
+    <p>Nombre d'emplois: {{ Object.keys(data.jobs).length }}</p>
 
     <div class="flex flex-col w-screen p-8 gap-4">
       <template v-for="job in data.jobs">
         <div :id="`job-${job.id}`" class="relative -top-[100px] h-0"></div>
         <JobDescription :id="job.id" />
       </template>
-      <!-- <JobDescription :id="job.id" v-for="job in data.jobs" /> -->
     </div>
 
   </main>
