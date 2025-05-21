@@ -26,9 +26,10 @@ loadData().then(loadedData => {
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/tree">Tree Viewer</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-      </ul>
-    </nav>
-  </header>
+        <RouterLink to="/graph">Data Analysis</RouterLink>
+		</ul>
+	</nav>
+</header>
 
   <!-- <div v-if="isLoading" class="flex items-center justify-center h-screen">
     <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
