@@ -32,9 +32,9 @@
 							node.data.origins.join(", ") : "Non renseignée" }}</p>
 					</TooltipDiv>
 					<TooltipDiv :messages="Object.entries(node.data.rawJobs).map(([key, value]) => `${key}: ${value}`)">
-						<p class="text-sm text-gray-600 w-full whitespace-nowrap">Emplois: {{ node.data.jobs.length !==
+						<p class="text-sm text-gray-600 w-full whitespace-nowrap">Emplois: {{ node.data.jobIds.length !==
 							0 ?
-							node.data.jobs.join(", ") : "Aucun" }}</p>
+							node.data.jobIds.map(jobId => data?.jobs[jobId].job).join(", ") : "Aucun" }}</p>
 					</TooltipDiv>
 					<p class="text-sm text-gray-600 w-full whitespace-nowrap">Recensé en: {{
 						node.data.censusYears.join(", ") }}
@@ -46,10 +46,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, onMounted, nextTick, watch, inject, type Ref} from 'vue'
 import * as d3 from 'd3'
-import type { Person } from '@/utils/person';
+import type { DataMap, Person } from '@/utils/person';
 import TooltipDiv from './TooltipDiv.vue';
+
+const data = inject<Ref<DataMap>>('data');
 
 const props = defineProps<{ rootPerson: Person | undefined }>();
 

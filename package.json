@@ -12,6 +12,7 @@
     "deploy": "npm run build && cp dist/index.html dist/404.html && gh-pages -d dist"
   },
   "dependencies": {
+    "@vueuse/core": "^13.2.0",
     "d3": "^7.9.0",
     "gh-pages": "^6.3.0",
     "vue": "^3.5.13",

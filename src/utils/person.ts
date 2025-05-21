@@ -8,9 +8,9 @@ function capitalizeFirstLetterOfEachWord(str: string): string {
 
 function snakeToCamelCase(str: string): string {
 	return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
-			  .replace(/^([A-Z])/, (match, letter) => letter.toLowerCase());
-  }
-  
+		.replace(/^([A-Z])/, (match, letter) => letter.toLowerCase());
+}
+
 
 function transformToPascalCase<T>(obj: Record<string, any>): T {
 	const result: Record<string, any> = {};
@@ -24,6 +24,7 @@ function transformToPascalCase<T>(obj: Record<string, any>): T {
 export type CensusEntry = {
 	id: number,
 	censusYear: number,
+	censusPage: number,
 	censusRow: number,
 	firstName: string,
 	lastName: string,
@@ -44,15 +45,17 @@ export class Person {
 	readonly parentId?: number;
 	private _parent?: Person;
 	readonly censusEntries: readonly CensusEntry[];
+	readonly jobIds: readonly string[];
 	readonly children: Person[];
 
-	constructor(id: string, firstName: string, lastName: string, birthYear: number | undefined, parentId: number, censusEntries: readonly CensusEntry[],) {
+	constructor(id: string, firstName: string, lastName: string, birthYear: number | undefined, parentId: number, censusEntries: readonly CensusEntry[], jobIds: readonly string[]) {
 		this.id = id;
 		this.firstName = capitalizeFirstLetterOfEachWord(firstName);
 		this.lastName = capitalizeFirstLetterOfEachWord(lastName);
 		this.birthYear = birthYear;
 		this.parentId = parentId;
 		this.censusEntries = censusEntries;
+		this.jobIds = jobIds;
 		this.children = [];
 	}
 
@@ -75,7 +78,7 @@ export class Person {
 		return this.censusEntries.map(entry => entry.censusYear)
 	}
 
-	get rawNames():  { [key: string]: string } {
+	get rawNames(): { [key: string]: string } {
 		const rawData: { [key: string]: string } = {}
 		this.censusEntries.forEach(entry => rawData[entry.censusYear] = `${entry.firstName} ${entry.lastName}`)
 		return rawData
@@ -88,7 +91,7 @@ export class Person {
 	}
 
 	get birthYears(): string[] {
-		const nonNullData = Object.values(this.rawBirthYears).filter(origin => origin !== null)
+		const nonNullData = Object.values(this.rawBirthYears).filter(birthYear => birthYear !== null)
 		return [...new Set(nonNullData)]
 	}
 
@@ -109,14 +112,9 @@ export class Person {
 		return rawData
 	}
 
-	get jobs(): string[] {
-		const nonNullOData = Object.values(this.rawJobs).filter(origin => origin !== null)
-		return [...new Set(nonNullOData)]
-	}
-
 
 	static fromJson(json: any): Person {
-		const { id, firstName, lastName, censusEntries, parent } = transformToPascalCase(json) as any;
+		const { id, firstName, lastName, censusEntries, parent, jobIds } = transformToPascalCase(json) as any;
 
 		const birthYear = 3000;
 
@@ -128,11 +126,16 @@ export class Person {
 
 		// Create a new Person instance
 		const person = new Person(
-			id, firstName, lastName, birthYear, parent, censusEntriesMapped
+			id, firstName, lastName, birthYear, parent, censusEntriesMapped, jobIds
 		);
 
 		return person;
 	}
+}
+
+export interface Job {
+	id: string
+	job: string
 }
 
 export async function fetchJsonData(url: string = "/tracked.json"): Promise<any> {
@@ -149,27 +152,37 @@ export async function fetchJsonData(url: string = "/tracked.json"): Promise<any>
 	}
 }
 
-export type PersonMap = { [key: string]: Person }
-export async function loadPersons(): Promise<PersonMap> {
+export type DataMap = { 
+	persons: { [key: string]: Person }
+	jobs: { [key: string]: Job }
+}
+export async function loadData(): Promise<DataMap> {
 	return fetchJsonData()
 		.then(jsonData => {
-			const people: Person[] = jsonData.map((data: any) => Person.fromJson(data));
-			const peopleMap: PersonMap = people.reduce((acc: PersonMap, person) => {
-				acc[person.id] = person;
-				return acc;
-			  }, {});
+			const people: Person[] = jsonData["persons"].map((data: any) => Person.fromJson(data));
+
+			const dataMap: DataMap = {
+				persons: {},
+				jobs: jsonData["jobs"]
+			}
+
+			people.forEach(person => {
+				dataMap.persons[person.id] = person
+			})
+
 
 			people.forEach(person => {
 				if (person.parentId) {
-					person.parent = peopleMap[person.parentId]
-					peopleMap[person.parentId].children.push(person)
+					person.parent = dataMap.persons[person.parentId]
+					dataMap.persons[person.parentId].children.push(person)
 				}
 			})
-						
-			return peopleMap
+
+
+			return dataMap
 		})
 		.catch(err => {
 			console.error("Error while fetching data:", err)
-			return {}
+			return {persons: {}, jobs: {}}
 		})
 }

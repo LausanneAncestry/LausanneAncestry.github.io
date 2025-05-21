@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FamilyTree from '@/components/FamilyTree.vue';
-import type { CensusEntry, Person, PersonMap } from '@/utils/person';
+import type { CensusEntry, Person, DataMap } from '@/utils/person';
 import { computed } from '@vue/reactivity';
 import { inject, ref, type Ref } from 'vue';
 
@@ -9,17 +9,29 @@ const props = defineProps<{
 	id: string
 }>()
 
-const persons = inject<Ref<PersonMap>>('persons');
-const person = computed(() => persons?.value[props.id])
+const data = inject<Ref<DataMap>>('data');
+const person = computed(() => data?.value.persons[props.id])
 
 </script>
 
 <template>
-	<div class="flex flex-col gap-9 m-8" v-if="person">
+	<div class="flex flex-col gap-2 m-8" v-if="person">
 		<h1 class="text-xl font-bold">{{ person.name }}#{{ person.id }}</h1>
 		<RouterLink :to="{ name: 'person', params: { id: person.parentId } }" v-if="person.parentId">
 			<h3 class="underline">Lien vers le parent</h3>
 		</RouterLink>
+
+		<div class="flex flex-col">
+			<h3 class="text-xl font-semibold text-gray-800 mb-2">
+				Emplois:
+			</h3>
+			<ul class="list-disc list-inside space-y-1 text-gray-700">
+				<li v-for="(jobId, index) in person.jobIds" :key="jobId">
+					{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}
+				</li>
+			</ul>
+		</div>
+
 		<div class="overflow-x-auto shadow-md rounded-lg">
 			<table class="min-w-full bg-white">
 				<thead class="bg-gray-800 text-white">
