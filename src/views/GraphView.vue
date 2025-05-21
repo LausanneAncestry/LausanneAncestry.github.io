@@ -118,7 +118,7 @@
   
   const svgRef = ref<SVGSVGElement | null>(null)
 
-  function drawChart(years) {
+  function drawChart(years: any) {
     // --- Prepare Data ---
     const data = persons.map(p => ({
       ...p,
@@ -246,7 +246,7 @@
       return d3.scaleLinear().domain([-1, 0, 1]).range([y0, y1, y2])(mean)
     }
   
-    const yearStats = years.map(year => {
+    const yearStats = years.map((year: any) => {
       const vals = data.filter(p => p.year_appear === year).map(p => p.resp_value)
       const mean = vals.length ? d3.mean(vals) ?? 0 : 0
       const std = vals.length ? d3.deviation(vals) ?? 0 : 0
@@ -258,10 +258,10 @@
       .enter()
       .append('line')
       .attr('class', 'error-bar')
-      .attr('x1', d => x(d.year))
-      .attr('x2', d => x(d.year))
-      .attr('y1', d => yFromMean(d.mean - d.std))
-      .attr('y2', d => yFromMean(d.mean + d.std))
+      .attr('x1', (d: any) => x(d.year))
+      .attr('x2', (d: any) => x(d.year))
+      .attr('y1', (d: any) => yFromMean(d.mean - d.std))
+      .attr('y2', (d: any) => yFromMean(d.mean + d.std))
       .attr('stroke', '#222')
       .attr('stroke-width', 2)
   
@@ -270,8 +270,8 @@
       .enter()
       .append('circle')
       .attr('class', 'mean-dot')
-      .attr('cx', d => x(d.year))
-      .attr('cy', d => yFromMean(d.mean))
+      .attr('cx', (d: any) => x(d.year))
+      .attr('cy', (d: any) => yFromMean(d.mean))
       .attr('r', 6)
       .attr('fill', '#222')
   }
