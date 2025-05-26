@@ -24,10 +24,6 @@ onMounted(() => {
   } else {
     document.addEventListener('visibilitychange', handleVisibilityChange)
   }
-
-  setInterval(() => {
-    console.log("sec")
-  }, 1000)
 })
 
 

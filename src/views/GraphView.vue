@@ -6,7 +6,7 @@
     <h3 class="chart-subtitle">
       of the 2nd Generation relative to those of the 1st Generation
     </h3>
-    <svg class="chart" ref="svgRef"></svg>
+    <svg class="chart" ref="respSvgRef"></svg>
   </div>
   <div class="chart-container">
     <h2 class="chart-title">
@@ -15,7 +15,7 @@
     <h3 class="chart-subtitle">
       of the 2nd Generation relative to those of the 1st Generation
     </h3>
-    <svg class="chart" ref=""></svg>
+    <svg class="chart" ref="trainSvgRef"></svg>
   </div>
   <div class="chart-container">
     <h2 class="chart-title">
@@ -24,117 +24,127 @@
     <h3 class="chart-subtitle">
       of the 2nd Generation relative to those of the 1st Generation
     </h3>
-    <svg class="chart" ref=""></svg>
+    <svg class="chart" ref="physSvgRef"></svg>
   </div>
 </template>
 
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, inject, type Ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, type Ref, watch } from 'vue'
 import * as d3 from 'd3'
-import type { DataMap } from '@/utils/person';
+import type { DataMap, Person } from '@/utils/person';
+import type { Job } from '@/utils/job';
 
 const data = inject<Ref<DataMap>>('data');
 if (!data) {
   throw new Error('data not provided');
 }
 
-const persons_ = data.value.persons
-const jobs = data.value.jobs
+onMounted(() => {
+  main()
+})
 
-interface Person {
-  id: string
-  job?: string
-  job_hierarchy?: 'worker' | 'boss'
-  year_appear: number
-  father_job?: string
-  father_job_hierarchy?: 'worker' | 'boss'
+watch(data, () => {
+  main()
+});
+
+
+type SVGRef = Ref<SVGSVGElement | null, SVGSVGElement | null>
+type PersonWithJobsMetadata = { person: Person, jobsMetadata: Job[] }
+type PersonWithFeatureCategory = { person: Person, firstYear: number, featureCategoryName: ComparisonResult, jobsMetadata: Job[] }
+
+const BANNED_JOB_LIST = ["-1", "10019"]
+
+enum ComparisonResult {
+  HIGHER = "higher",
+  IDENTICAL = "identical",
+  LOWER = "lower"
 }
 
-//made up data for testing:
-const persons: Person[] = [
-  { id: 'p1', job: 'Factory Owner', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Blacksmith', father_job_hierarchy: 'worker' },
-  { id: 'p2', job: 'Clerk', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Merchant', father_job_hierarchy: 'boss' },
-  { id: 'p3', job: 'Farmer', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p4', job: 'Merchant', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p5', job: 'Factory Worker', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Factory Owner', father_job_hierarchy: 'boss' },
-  { id: 'p6', job: 'Blacksmith', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Blacksmith', father_job_hierarchy: 'worker' },
-  { id: 'p7', job: 'Bank Manager', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Clerk', father_job_hierarchy: 'worker' },
-  { id: 'p8', job: 'Farmer', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p9', job: 'Merchant', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Merchant', father_job_hierarchy: 'boss' },
-  { id: 'p10', job: 'Factory Worker', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Factory Worker', father_job_hierarchy: 'worker' },
-  { id: 'p11', job: 'Factory Owner', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Factory Worker', father_job_hierarchy: 'worker' },
-  { id: 'p12', job: 'Clerk', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Bank Manager', father_job_hierarchy: 'boss' },
-  { id: 'p13', job: 'Baker', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Baker', father_job_hierarchy: 'worker' },
-  { id: 'p14', job: 'Lawyer', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Clerk', father_job_hierarchy: 'worker' },
-  { id: 'p15', job: 'Teacher', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Teacher', father_job_hierarchy: 'worker' },
-  { id: 'p16', job: 'Doctor', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Doctor', father_job_hierarchy: 'boss' },
-  { id: 'p17', job: 'Shoemaker', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Shoemaker', father_job_hierarchy: 'worker' },
-  { id: 'p18', job: 'Innkeeper', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p19', job: 'Carpenter', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Carpenter', father_job_hierarchy: 'worker' },
-  { id: 'p20', job: 'Printer', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Printer', father_job_hierarchy: 'worker' },
-  { id: 'p21', job: 'Bank Manager', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Bank Manager', father_job_hierarchy: 'boss' },
-  { id: 'p22', job: 'Butcher', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Butcher', father_job_hierarchy: 'worker' },
-  { id: 'p23', job: 'Merchant', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p24', job: 'Tailor', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Tailor', father_job_hierarchy: 'worker' },
-  { id: 'p25', job: 'Doctor', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Teacher', father_job_hierarchy: 'worker' },
-  { id: 'p26', job: 'Lawyer', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Lawyer', father_job_hierarchy: 'boss' },
-  { id: 'p27', job: 'Baker', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Innkeeper', father_job_hierarchy: 'boss' },
-  { id: 'p28', job: 'Shopkeeper', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Shopkeeper', father_job_hierarchy: 'boss' },
-  { id: 'p29', job: 'Mason', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Mason', father_job_hierarchy: 'worker' },
-  { id: 'p30', job: 'Apothecary', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Clerk', father_job_hierarchy: 'worker' },
-  { id: 'p31', job: 'Farmer', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Merchant', father_job_hierarchy: 'boss' },
-  { id: 'p32', job: 'Blacksmith', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Blacksmith', father_job_hierarchy: 'worker' },
-  { id: 'p32', job: 'Blacksmith', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Blacksmith', father_job_hierarchy: 'worker' },
-  { id: 'p33', job: 'Shopkeeper', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Carpenter', father_job_hierarchy: 'worker' },
-  { id: 'p34', job: 'Tailor', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Tailor', father_job_hierarchy: 'worker' },
-  { id: 'p35', job: 'Bank Manager', job_hierarchy: 'boss', year_appear: 1835, father_job: 'Clerk', father_job_hierarchy: 'worker' },
-  { id: 'p36', job: 'Farmer', job_hierarchy: 'worker', year_appear: 1835, father_job: 'Merchant', father_job_hierarchy: 'boss' },
-  { id: 'p37', job: 'Carpenter', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Carpenter', father_job_hierarchy: 'worker' },
-  { id: 'p38', job: 'Doctor', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Doctor', father_job_hierarchy: 'boss' },
-  { id: 'p39', job: 'Factory Worker', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Factory Owner', father_job_hierarchy: 'boss' },
-  { id: 'p40', job: 'Baker', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Innkeeper', father_job_hierarchy: 'boss' },
-  { id: 'p41', job: 'Lawyer', job_hierarchy: 'boss', year_appear: 1855, father_job: 'Lawyer', father_job_hierarchy: 'boss' },
-  { id: 'p42', job: 'Teacher', job_hierarchy: 'worker', year_appear: 1855, father_job: 'Teacher', father_job_hierarchy: 'worker' },
-  { id: 'p43', job: 'Printer', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Printer', father_job_hierarchy: 'worker' },
-  { id: 'p44', job: 'Butcher', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Butcher', father_job_hierarchy: 'worker' },
-  { id: 'p45', job: 'Innkeeper', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Farmer', father_job_hierarchy: 'worker' },
-  { id: 'p46', job: 'Apothecary', job_hierarchy: 'boss', year_appear: 1875, father_job: 'Clerk', father_job_hierarchy: 'worker' },
-  { id: 'p47', job: 'Shoemaker', job_hierarchy: 'worker', year_appear: 1875, father_job: 'Shoemaker', father_job_hierarchy: 'worker' },
-  { id: 'p48', job: 'Merchant', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Merchant', father_job_hierarchy: 'boss' },
-  { id: 'p49', job: 'Factory Owner', job_hierarchy: 'boss', year_appear: 1890, father_job: 'Factory Worker', father_job_hierarchy: 'worker' },
-  { id: 'p50', job: 'Clerk', job_hierarchy: 'worker', year_appear: 1890, father_job: 'Bank Manager', father_job_hierarchy: 'boss' },
-]
-
-const yCategories = [
-  'higher',
-  'identical',
-  'lower'
-] as const
-
-type YCategory = typeof yCategories[number]
-
-function responsibilityCategory(p: Person): YCategory {
-  if (p.job_hierarchy === 'boss' && p.father_job_hierarchy === 'worker') return 'higher'
-  if (p.job_hierarchy === 'worker' && p.father_job_hierarchy === 'boss') return 'lower'
-  return 'identical'
-}
-function responsibilityValue(p: Person): number {
-  if (p.job_hierarchy === 'boss' && p.father_job_hierarchy === 'worker') return 1
-  if (p.job_hierarchy === 'worker' && p.father_job_hierarchy === 'boss') return -1
-  return 0
+function ComparisonResultToNumber(result: ComparisonResult) {
+  if (result == ComparisonResult.LOWER) return -1
+  if (result == ComparisonResult.IDENTICAL) return 0
+  return 1
 }
 
-const svgRef = ref<SVGSVGElement | null>(null)
+const respSvgRef = ref<SVGSVGElement | null>(null)
+const trainSvgRef = ref<SVGSVGElement | null>(null)
+const physSvgRef = ref<SVGSVGElement | null>(null)
 
-function drawChart(years: any) {
-  // --- Prepare Data ---
-  const data = persons.map(p => ({
-    ...p,
-    resp_category: responsibilityCategory(p),
-    resp_value: responsibilityValue(p)
+let personsWithJobsMetadata: { [key: string]: PersonWithJobsMetadata }
+function main() {
+  if (!data) {
+    throw new Error('data not provided');
+  }
+
+  const persons = data.value.persons
+  const jobs = data.value.jobs
+  personsWithJobsMetadata = Object.fromEntries(Object.values(persons).map(person => [person.id, person.withJobsMetadata(jobs)]))
+
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), respSvgRef, "hierarchy", (v1, v2) => {
+    if (v1 === 'boss' && v2 === 'worker') return ComparisonResult.HIGHER
+    if (v1 === 'worker' && v2 === 'boss') return ComparisonResult.LOWER
+    return ComparisonResult.IDENTICAL
+  })
+
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), trainSvgRef, "training duration", (v1, v2) => {
+    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.HIGHER
+    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.LOWER
+    return ComparisonResult.IDENTICAL
+  })
+
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), physSvgRef, "physicality", (v1, v2) => {
+    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.HIGHER
+    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.LOWER
+    return ComparisonResult.IDENTICAL
+  })
+}
+
+function compareGenerationalEvolution(
+  persons: PersonWithJobsMetadata[],
+  svgRef: SVGRef,
+  featureName: string,
+  compare: (v1: string, v2: string) => ComparisonResult,
+) {
+  const years: Set<number> = new Set();
+  const personsWithMaxJobValues = Object.fromEntries(persons.map(p => {
+    p.person.censusYears.forEach(year => years.add(year))
+    const jobList = p.jobsMetadata
+    let max = jobList[0].metadata[featureName] as string;
+    let maxId = jobList[0].id;
+    for (let i = 1; i < jobList.length; i++) {
+      if (compare(jobList[i].metadata[featureName], max) == ComparisonResult.HIGHER) {
+        max = jobList[i].metadata[featureName]
+        maxId = jobList[i].id
+      }
+    }
+    return [p.person.id, { ...p, maxFeatureValue: max, maxFeatureJobId: maxId }]
   }))
 
+  function isValid(p: {
+    maxFeatureValue: string;
+    maxFeatureJobId: string;
+    person: Person;
+    jobsMetadata: Job[];
+  }) {
+    if (!p.person.parentId) return false
+    const parentData = personsWithMaxJobValues[p.person.parentId]
+    return p.person.parentId !== null && p.maxFeatureValue && !BANNED_JOB_LIST.includes(p.maxFeatureJobId) && parentData.maxFeatureValue && !BANNED_JOB_LIST.includes(parentData.maxFeatureJobId)
+  }
+
+  const personsWithFeatureCategory: PersonWithFeatureCategory[] = Object.entries(personsWithMaxJobValues).filter(([, p]) => isValid(p)).map(([, p]) => {
+    return {
+      person: p.person,
+      firstYear: Math.min(...p.person.censusYears),
+      featureCategoryName: compare(p.maxFeatureValue, personsWithMaxJobValues[p.person.parentId!].maxFeatureValue),
+      jobsMetadata: p.jobsMetadata
+    }
+  });
+
+  drawChart(personsWithFeatureCategory, featureName, Array.from(years).sort(), svgRef)
+}
+
+function drawChart(data: PersonWithFeatureCategory[], featureName: string, years: number[], svgRef: SVGRef) {
   const container = svgRef.value?.parentElement
   if (!container) return
 
@@ -150,8 +160,8 @@ function drawChart(years: any) {
     .domain([1800, 1900])
     .range([0, width])
 
-  const y = d3.scalePoint<YCategory>()
-    .domain(yCategories)
+  const y = d3.scalePoint<ComparisonResult>()
+    .domain(Object.values(ComparisonResult))
     .range([0, height])
     .padding(0.5)
 
@@ -196,8 +206,8 @@ function drawChart(years: any) {
   function jitterX() { return (Math.random() - 0.5) * 30 }
 
   // --- Color ---
-  const color = d3.scaleOrdinal<YCategory, string>()
-    .domain(yCategories)
+  const color = d3.scaleOrdinal<ComparisonResult, string>()
+    .domain(Object.values(ComparisonResult))
     .range(['#2ca02c', '#1f77b4', '#d62728'])
 
   // --- Tooltip ---
@@ -220,18 +230,19 @@ function drawChart(years: any) {
     .enter()
     .append('circle')
     .attr('class', 'person')
-    .attr('cx', d => x(d.year_appear) + jitterX())
-    .attr('cy', d => y(d.resp_category)! + jitterY())
+    .attr('cx', d => x(d.firstYear) + jitterX())
+    .attr('cy', d => y(d.featureCategoryName)! + jitterY())
     .attr('r', 4)
-    .attr('fill', d => color(d.resp_category))
+    .attr('fill', d => color(d.featureCategoryName))
     .attr('stroke', '#333')
     .attr('stroke-width', 1.5)
     .style('cursor', 'pointer')
     .on('mouseover', function (event, d) {
+      const parentJobsMetadata = personsWithJobsMetadata[d.person.parentId!].jobsMetadata
       tooltip.transition().duration(150).style('opacity', 1)
       tooltip.html(
-        `<strong>Job:</strong> ${d.job} (${d.job_hierarchy})<br>
-        <strong>Father's job:</strong> ${d.father_job} (${d.father_job_hierarchy})`
+        `<strong>Job:</strong> ${d.jobsMetadata.map(j => j.job)} | ${d.jobsMetadata.map(j => j.id)} (${d.jobsMetadata.map(j => j.metadata[featureName])})<br>
+        <strong>Parent's job:</strong> ${parentJobsMetadata.map(j => j.job)} | ${parentJobsMetadata.map(j => j.id)} (${parentJobsMetadata.map(j => j.metadata[featureName])})`
       )
         .style('left', (event.pageX + 18) + 'px')
         .style('top', (event.pageY - 28) + 'px')
@@ -248,15 +259,11 @@ function drawChart(years: any) {
 
   // --- Error Bars ---
   function yFromMean(mean: number) {
-    // -1: lower, 0: identical, 1: higher
-    const y0 = y('lower')!
-    const y1 = y('identical')!
-    const y2 = y('higher')!
-    return d3.scaleLinear().domain([-1, 0, 1]).range([y0, y1, y2])(mean)
+    return d3.scaleLinear().domain([-1, 0, 1]).range(Object.values(ComparisonResult).map(d => y(d)!))(mean)
   }
 
-  const yearStats = years.map((year: any) => {
-    const vals = data.filter(p => p.year_appear === year).map(p => p.resp_value)
+  const yearStats = years.map((year: number) => {
+    const vals = data.filter(p => p.firstYear === year).map(p => ComparisonResultToNumber(p.featureCategoryName))
     const mean = vals.length ? d3.mean(vals) ?? 0 : 0
     const std = vals.length ? d3.deviation(vals) ?? 0 : 0
     return { year, mean, std }
@@ -267,10 +274,10 @@ function drawChart(years: any) {
     .enter()
     .append('line')
     .attr('class', 'error-bar')
-    .attr('x1', (d: any) => x(d.year))
-    .attr('x2', (d: any) => x(d.year))
-    .attr('y1', (d: any) => yFromMean(d.mean - d.std))
-    .attr('y2', (d: any) => yFromMean(d.mean + d.std))
+    .attr('x1', d => x(d.year))
+    .attr('x2', d => x(d.year))
+    .attr('y1', d => yFromMean(d.mean - d.std))
+    .attr('y2', d => yFromMean(d.mean + d.std))
     .attr('stroke', '#222')
     .attr('stroke-width', 2)
 
@@ -279,24 +286,15 @@ function drawChart(years: any) {
     .enter()
     .append('circle')
     .attr('class', 'mean-dot')
-    .attr('cx', (d: any) => x(d.year))
-    .attr('cy', (d: any) => yFromMean(d.mean))
+    .attr('cx', d => x(d.year))
+    .attr('cy', d => yFromMean(d.mean))
     .attr('r', 6)
     .attr('fill', '#222')
 }
 
-onMounted(() => {
-  const years = [1835, 1855, 1875, 1890]
-  drawChart(years)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', drawChart)
-})
-
 </script>
 
-<style scoped>
+<style>
 .tooltip {
   z-index: 1000;
 }

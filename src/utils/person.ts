@@ -90,6 +90,13 @@ export class Person {
 		return rawData
 	}
 
+	withJobsMetadata(jobs: { [key: string]: Job }): {person: Person, jobsMetadata: Job[]} {
+		return {
+			person: this,
+			jobsMetadata: this.jobIds.map(jobId => jobs[jobId]) 
+		}
+	}
+
 
 	static fromJson(json: any): Person {
 		const { id, firstName, lastName, censusEntries, parent, jobIds } = transformToPascalCase(json) as any;
