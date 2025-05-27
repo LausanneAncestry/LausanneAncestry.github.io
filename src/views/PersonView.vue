@@ -16,27 +16,27 @@ function keyTranslation(key: string) {
 	switch (key) {
 		// case ""
 		case "censusYear":
-			return "Année de recensement"
+			return "année de recensement"
 		case "censusPage":
-			return "Page"
+			return "page"
 		case "censusRow":
-			return "Ligne"
+			return "ligne"
 		case "firstName":
-			return "Prénom"
+			return "prénom"
 		case "lastName":
-			return "Nom"
+			return "nom"
 		case "birthYear":
-			return "Année de naissance"
+			return "année de naissance"
 		case "origin":
-			return "Emploi"
+			return "emploi"
 		case "houseNb":
-			return "Numéro"
+			return "numéro"
 		case "streetName":
-			return "Rue"
+			return "rue"
 		case "parentCensusEntry":
-			return "Entrée du parent"
+			return "entrée du parent"
 		case "person":
-			return "Id de la personne"
+			return "id de la personne"
 		default:
 			return key;
 	}
