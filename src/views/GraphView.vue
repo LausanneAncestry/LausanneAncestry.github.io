@@ -88,14 +88,14 @@ function main() {
   })
 
   compareGenerationalEvolution(Object.values(personsWithJobsMetadata), trainSvgRef, "training duration", (v1, v2) => {
-    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.HIGHER
-    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.LOWER
+    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.HIGHER
+    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.LOWER
     return ComparisonResult.IDENTICAL
   })
 
   compareGenerationalEvolution(Object.values(personsWithJobsMetadata), physSvgRef, "physicality", (v1, v2) => {
-    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.HIGHER
-    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.LOWER
+    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.HIGHER
+    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.LOWER
     return ComparisonResult.IDENTICAL
   })
 }
@@ -199,7 +199,7 @@ function drawChart(data: PersonWithFeatureCategory[], featureName: string, years
     .attr('transform', `rotate(-90,${margin.left - 160},${margin.top + height / 2})`)
     .attr('font-size', 14)
     .attr('font-weight', 'bold')
-    .text('Responsibility relative to 1st generation')
+    .text(`${featureName} relative to 1st generation`)
 
   // --- Jitter helpers ---
   function jitterY() { return (Math.random() - 0.5) * 30 }
@@ -241,8 +241,8 @@ function drawChart(data: PersonWithFeatureCategory[], featureName: string, years
       const parentJobsMetadata = personsWithJobsMetadata[d.person.parentId!].jobsMetadata
       tooltip.transition().duration(150).style('opacity', 1)
       tooltip.html(
-        `<strong>Job:</strong> ${d.jobsMetadata.map(j => j.job)} | ${d.jobsMetadata.map(j => j.id)} (${d.jobsMetadata.map(j => j.metadata[featureName])})<br>
-        <strong>Parent's job:</strong> ${parentJobsMetadata.map(j => j.job)} | ${parentJobsMetadata.map(j => j.id)} (${parentJobsMetadata.map(j => j.metadata[featureName])})`
+        `<strong>Job:</strong> ${d.jobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${d.jobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})<br>
+        <strong>Parent's job:</strong> ${parentJobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${parentJobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})`
       )
         .style('left', (event.pageX + 18) + 'px')
         .style('top', (event.pageY - 28) + 'px')
@@ -259,7 +259,7 @@ function drawChart(data: PersonWithFeatureCategory[], featureName: string, years
 
   // --- Error Bars ---
   function yFromMean(mean: number) {
-    return d3.scaleLinear().domain([-1, 0, 1]).range(Object.values(ComparisonResult).map(d => y(d)!))(mean)
+    return d3.scaleLinear().domain([1, 0, -1]).range(Object.values(ComparisonResult).map(d => y(d)!))(mean)
   }
 
   const yearStats = years.map((year: number) => {
