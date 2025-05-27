@@ -36,6 +36,7 @@ const paginatedPersons = computed(() => {
 
 // Navigate to a different page
 function goToPage(page: number) {
+  inputPage.value = clampPage(page)
   router.push({ query: { ...route.query, page: clampPage(page) } });
 }
 
