@@ -45,10 +45,9 @@ function clampPage(page: number): number {
 </script>
 
 <template>
-  <main class="flex flex-col items-center gap-10">
+  <main class="flex flex-col items-center">
     <h1 class="text-3xl font-bold mt-10">Arbres Généalogiques</h1>
-
-    <p>Nombre d'arbres: {{ rootPersons.length }}</p>
+    <p>Nombre total d'arbres: {{ rootPersons.length }}</p>
 
     <div class="flex flex-wrap gap-16 m-8 justify-center">
       <FamilyTree :root-person="person" v-for="person in paginatedPersons" :key="person.id" />

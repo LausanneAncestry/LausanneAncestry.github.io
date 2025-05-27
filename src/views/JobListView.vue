@@ -46,7 +46,6 @@ function scroll() {
 <template>
   <main class="flex flex-col items-center">
     <h1 class="text-3xl font-bold mt-10">Liste des emplois</h1>
-
     <p>Nombre d'emplois: {{ Object.keys(data.jobs).length }}</p>
 
     <div class="flex flex-col w-screen p-8 gap-4">
