@@ -1,28 +1,28 @@
 <template>
   <div class="chart-container">
     <h2 class="chart-title">
-      Professional Responsibilities
+      Responsabilités Professionnelles
     </h2>
     <h3 class="chart-subtitle">
-      of the 2nd Generation relative to those of the 1st Generation
+      de la 2ème Génération par rapport à celles de la 1ère Génération
     </h3>
     <svg class="chart" ref="respSvgRef"></svg>
   </div>
   <div class="chart-container">
     <h2 class="chart-title">
-      Training Duration
+      Durée de la Formation
     </h2>
     <h3 class="chart-subtitle">
-      of the 2nd Generation relative to those of the 1st Generation
+      de la 2ème Génération par rapport à celles de la 1ère Génération
     </h3>
     <svg class="chart" ref="trainSvgRef"></svg>
   </div>
   <div class="chart-container">
     <h2 class="chart-title">
-      Job Physicality
+      Physique du Travail
     </h2>
     <h3 class="chart-subtitle">
-      of the 2nd Generation relative to those of the 1st Generation
+      de la 2ème Génération par rapport à celles de la 1ère Génération
     </h3>
     <svg class="chart" ref="physSvgRef"></svg>
   </div>
@@ -81,21 +81,21 @@ function main() {
   const jobs = data.value.jobs
   personsWithJobsMetadata = Object.fromEntries(Object.values(persons).map(person => [person.id, person.withJobsMetadata(jobs)]))
 
-  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), respSvgRef, "hierarchy", (v1, v2) => {
-    if (v1 === 'boss' && v2 === 'worker') return ComparisonResult.HIGHER
-    if (v1 === 'worker' && v2 === 'boss') return ComparisonResult.LOWER
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), respSvgRef, "hiérarchie", "Hiérarchie relative à la 1ère génération", (v1, v2) => {
+    if (v1 === 'chef' && v2 === 'travailleur') return ComparisonResult.HIGHER
+    if (v1 === 'travailleur' && v2 === 'chef') return ComparisonResult.LOWER
     return ComparisonResult.IDENTICAL
   })
 
-  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), trainSvgRef, "training duration", (v1, v2) => {
-    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.HIGHER
-    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.LOWER
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), trainSvgRef, "durée d'apprentissage", "Durée d'apprentissage relative à la 1ère génération", (v1, v2) => {
+    if ((v1 === 'haut' && v2 !== 'haut') || (v1 === 'moyen' && v2 === 'bas')) return ComparisonResult.HIGHER
+    if ((v1 === 'bas' && v2 !== 'bas') || (v1 === 'moyen' && v2 === 'haut')) return ComparisonResult.LOWER
     return ComparisonResult.IDENTICAL
   })
 
-  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), physSvgRef, "physicality", (v1, v2) => {
-    if ((v1 === 'high' && v2 !== 'high') || (v1 === 'medium' && v2 === 'low')) return ComparisonResult.HIGHER
-    if ((v1 === 'low' && v2 !== 'low') || (v1 === 'medium' && v2 === 'high')) return ComparisonResult.LOWER
+  compareGenerationalEvolution(Object.values(personsWithJobsMetadata), physSvgRef, "physicalité", "Physicalité relative à la 1ère génération", (v1, v2) => {
+    if ((v1 === 'haut' && v2 !== 'haut') || (v1 === 'moyen' && v2 === 'bas')) return ComparisonResult.HIGHER
+    if ((v1 === 'bas' && v2 !== 'bas') || (v1 === 'moyen' && v2 === 'haut')) return ComparisonResult.LOWER
     return ComparisonResult.IDENTICAL
   })
 }
@@ -104,6 +104,7 @@ function compareGenerationalEvolution(
   persons: PersonWithJobsMetadata[],
   svgRef: SVGRef,
   featureName: string,
+  yAxisName: string,
   compare: (v1: string, v2: string) => ComparisonResult,
 ) {
   const years: Set<number> = new Set();
@@ -141,10 +142,10 @@ function compareGenerationalEvolution(
     }
   });
 
-  drawChart(personsWithFeatureCategory, featureName, Array.from(years).sort(), svgRef)
+  drawChart(personsWithFeatureCategory, featureName, Array.from(years).sort(), yAxisName, svgRef)
 }
 
-function drawChart(data: PersonWithFeatureCategory[], featureName: string, years: number[], svgRef: SVGRef) {
+function drawChart(data: PersonWithFeatureCategory[], featureName: string, years: number[], yAxisName: string, svgRef: SVGRef) {
   const container = svgRef.value?.parentElement
   if (!container) return
 
@@ -199,7 +200,7 @@ function drawChart(data: PersonWithFeatureCategory[], featureName: string, years
     .attr('transform', `rotate(-90,${margin.left - 160},${margin.top + height / 2})`)
     .attr('font-size', 14)
     .attr('font-weight', 'bold')
-    .text(`${featureName} relative to 1st generation`)
+    .text(yAxisName)
 
   // --- Jitter helpers ---
   function jitterY() { return (Math.random() - 0.5) * 30 }
@@ -241,8 +242,8 @@ function drawChart(data: PersonWithFeatureCategory[], featureName: string, years
       const parentJobsMetadata = personsWithJobsMetadata[d.person.parentId!].jobsMetadata
       tooltip.transition().duration(150).style('opacity', 1)
       tooltip.html(
-        `<strong>Job:</strong> ${d.jobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${d.jobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})<br>
-        <strong>Parent's job:</strong> ${parentJobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${parentJobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})`
+        `<strong>Emplois:</strong> ${d.jobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${d.jobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})<br>
+        <strong>Emplois du parent:</strong> ${parentJobsMetadata.map(j => j.job).filter(j => j !== "").join(", ")} (${parentJobsMetadata.map(j => j.metadata[featureName]).filter(j => j !== "").join(", ")})`
       )
         .style('left', (event.pageX + 18) + 'px')
         .style('top', (event.pageY - 28) + 'px')

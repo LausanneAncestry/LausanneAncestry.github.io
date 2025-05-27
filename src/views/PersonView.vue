@@ -12,6 +12,36 @@ const props = defineProps<{
 const data = inject<Ref<DataMap>>('data');
 const person = computed(() => data?.value.persons[props.id])
 
+function keyTranslation(key: string) {
+	switch (key) {
+		// case ""
+		case "censusYear":
+			return "Année de recensement"
+		case "censusPage":
+			return "Page"
+		case "censusRow":
+			return "Ligne"
+		case "firstName":
+			return "Prénom"
+		case "lastName":
+			return "Nom"
+		case "birthYear":
+			return "Année de naissance"
+		case "origin":
+			return "Emploi"
+		case "houseNb":
+			return "Numéro"
+		case "streetName":
+			return "Rue"
+		case "parentCensusEntry":
+			return "Entrée du parent"
+		case "person":
+			return "Id de la personne"
+		default:
+			return key;
+	}
+}
+
 </script>
 
 <template>
@@ -23,12 +53,12 @@ const person = computed(() => data?.value.persons[props.id])
 
 		<div class="flex flex-col">
 			<h3 class="text-xl font-semibold text-gray-800 mb-2">
-				Emplois:
+				Emploi:
 			</h3>
 			<ul class="list-disc list-inside space-y-1 text-gray-700">
 				<li v-for="(jobId, index) in person.jobIds" :key="jobId">
-					<RouterLink :to="{ name: 'jobs', hash: `#job-${jobId}` }">
-						<h3 class="underline">{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}</h3>
+					<RouterLink :to="{ name: 'jobs', hash: `#job-${jobId}` }" class="underline">
+						{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}
 					</RouterLink>
 				</li>
 			</ul>
@@ -38,7 +68,8 @@ const person = computed(() => data?.value.persons[props.id])
 			<table class="min-w-full bg-white">
 				<thead class="bg-gray-800 text-white">
 					<tr>
-						<th class="py-3 px-6 text-left" v-for="key in Object.keys(person.censusEntries[0])">{{ key }}
+						<th class="py-3 px-6 text-left" v-for="key in Object.keys(person.censusEntries[0])">{{
+							keyTranslation(key) }}
 						</th>
 					</tr>
 				</thead>
