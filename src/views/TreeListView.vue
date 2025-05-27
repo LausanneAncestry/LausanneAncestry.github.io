@@ -56,21 +56,29 @@ function clampPage(page: number): number {
     <div class="flex flex-wrap gap-4 items-center justify-center my-4">
       <!-- Previous Button -->
       <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
-        class="cursor-pointer px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="cursor-pointer px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
         Précédent
       </button>
 
-      <!-- Page Input Field -->
+      <!-- Input field with embedded "Aller à" button (wider input) -->
       <div class="flex items-center gap-2">
         <span>Page</span>
-        <input v-model.number="inputPage" @keydown.enter="goToPage(inputPage)" type="number" :min="1" :max="totalPages"
-          class="w-16 text-center border rounded px-2 py-1" />
+        <div class="flex flex-row items-stretch">
+          <input v-model.number="inputPage" type="number" :min="1" :max="totalPages"
+            class="focus:outline-none text-center border border-r-0 rounded-l px-2 py-1 h-10" />
+          <button @click="goToPage(inputPage)"
+            class="focus:outline-none bg-gray-300 px-3 rounded-r border border-l-0 hover:bg-gray-400 transition h-10">
+            Aller
+          </button>
+        </div>
+
         <span>sur {{ totalPages }}</span>
       </div>
 
+
       <!-- Next Button -->
       <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= totalPages"
-        class="cursor-pointer px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="cursor-pointer px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
         Suivant
       </button>
     </div>
