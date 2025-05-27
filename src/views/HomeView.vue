@@ -34,5 +34,6 @@
   margin-top: 2%;
   margin-left: 10%;
   margin-right: 10%;
+  margin-bottom: 6rem;
 }
 </style>
