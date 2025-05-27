@@ -26,11 +26,13 @@
 .analysis_title {
   margin-bottom: 2%;
   text-align: center;
-  font-size: larger;
+  font-size: 2.2rem;
   font-weight: bold;
 }
 
 .analysis {
-  margin: 5%;
+  margin-top: 2%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 </style>
