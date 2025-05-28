@@ -20,7 +20,7 @@
     </div>
     <div class="chart-container flex flex-col items-center">
       <h2 class="chart-title">
-        Physique du Travail
+        Physicalité du Travail
       </h2>
       <h3 class="chart-subtitle">
         de la 2ème Génération par rapport à celles de la 1ère Génération
