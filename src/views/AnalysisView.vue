@@ -152,7 +152,11 @@
         <br><br>
         Enfin, nous pouvons nous pencher sur des métiers spécifiques. A cette fin, nous avons choisis 3 métiers
         possèdent de nombreux individus dans nos paires parent/enfant, qui représentent la classe populaire
-        (agriculteur), la classe moyenne (négociant) et la classe bourgeoise (rentier). Pour chacune nous avons crée un
+        (agriculteur) et la classe moyenne-haute (négociant). Les rentiers quant à eux, ce sont des personnes qui
+        reçoivent une rente, mais cette dernière peut provenir de l'état ou bien de fonds privés. Ainsi, ceux
+        catégorisés comme "rentiers" peuvent provenir de classes sociales différents, mais il reste néanmoins
+        intéressant d'analyser leurs relations. Pour chacune nous
+        avons crée un
         diagramme de Sankey, afin de visualiser ce que deviennent les enfants des parents ayant le métier mentionné
         précedemment:
 
@@ -165,9 +169,12 @@
         Ces diagrames montrent donc le rapport entre 3
         “métiers” faisant partie de 3 classes sociales différentes, par rapport aux métiers de leurs enfants. Sans
         grande surprise, les enfants de parents agriculteurs restent pour la plupart liés à l’agriculture, tandis que
-        ceux issus de parents négociants ou rentiers, possadant un capital financier plus important, ont pour la plupart
+        ceux issus de parents négociants ou une majorité des rentiers, possadant un capital financier plus important,
+        ont pour la plupart
         soit des professions de prestige nécessitant des études, tels que banquier ou avocat, soit ils sont eux-mêmes
-        propriétaires et sont capables d'en vivre.
+        propriétaires ou rentiers et sont capables de vivre de leurs acquis. On perçoit néanmoins un bon nombre de
+        rentiers ayant des enfants à métiers plus "pauvres", ces derniers sont sans doute ceux dont la rente ne provient
+        pas d'acquis financiers, mais de l'état ou d'une autre entité externe.
 
 
         <h1 class="analysis_title">Conclusion</h1>
@@ -177,7 +184,8 @@
         supposer que le début du changement d’une économie de production vers une forme primitive de l’économie de
         services se situe aux alentours de 1880-90.
         <br><br>
-        Concernant la mobilité sociale, celle-ci n'existe que très légèrement. Les enfants restent tendanciellement dans la
+        Concernant la mobilité sociale, celle-ci n'existe que très légèrement. Les enfants restent tendanciellement dans
+        la
         même catégorie que leurs parents. La plus grande mobilité se trouve dans le secteur primaire, dont bon nombre
         d’enfants changent vers le secteur secondaire, tandis que près d’un quart des enfants naissant de parents
         travaillant dans l’industrie possèdent des métiers dans les services. Toutefois, les enfants à cette époque
