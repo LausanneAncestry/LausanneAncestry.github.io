@@ -64,7 +64,5 @@
         </p>
       </div>
     </section>
-
-
   </main>
 </template>

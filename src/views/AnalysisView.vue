@@ -4,7 +4,7 @@
 
 <template>
   <main>
-    <div class="analysis">
+    <div class="analysis p-10 rounded-2xl bg-white shadow-2xl border border-gray-200">
       <h1 class="analysis_title">Sources</h1>
       <div>
         La source principale de notre travail sont les recensements Lausannois, fournis par le Lausanne Time Machine
@@ -38,7 +38,7 @@
         qualité des
         recensements et de leur recognition automatique, nous avons décidé d’utiliser les recensements suivants, qui
         semblaient avoir une représentativité satisfaisante à travers le temps et donc les générations:
-        <ul>
+        <ul class="flex flex-col">
           <li>1835</li>
           <li>1855</li>
           <li>1874</li>
@@ -69,7 +69,7 @@
         <br><br>
         Après l’ensemble de ce traitement, nous avons manuellement vérifié l'erreur. Pour le traçage des personnes,
         nous sommes autour des 90% de précision. Voici les données finales (à travers 4 recensements):
-        <ul>
+        <ul class="flex flex-col">
           <li>5251 personnes distinctes trouvées</li>
           <li>2435 liens parents / enfants trouvés</li>
           <li>1546 arbres familiaux trouvés</li>
@@ -215,7 +215,21 @@
   </main>
 </template>
 
-<style>
+<style scoped>
+.analysis_title {
+  margin-bottom: 2%;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.analysis {
+  margin-top: 2%;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 6rem;
+}
+
 ul {
   margin-top: 5px;
   margin-bottom: 5px;
