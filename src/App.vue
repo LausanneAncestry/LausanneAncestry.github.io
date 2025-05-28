@@ -26,7 +26,8 @@ loadData().then(loadedData => {
         <RouterLink to="/">Accueil</RouterLink>
         <RouterLink to="/trees">Arbres</RouterLink>
         <RouterLink to="/jobs">Liste des emplois</RouterLink>
-        <RouterLink to="/graph">Analyse des données</RouterLink>
+        <RouterLink to="/graph">Visualisation interactive</RouterLink>
+        <RouterLink to="/analysis">Analyse des données</RouterLink>
 		</ul>
 	</nav>
 </header>
