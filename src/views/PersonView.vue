@@ -14,7 +14,6 @@ const person = computed(() => data?.value.persons[props.id])
 
 function keyTranslation(key: string) {
 	switch (key) {
-		// case ""
 		case "censusYear":
 			return "année de recensement"
 		case "censusPage":
@@ -55,7 +54,7 @@ function keyTranslation(key: string) {
 			<h3 class="text-xl font-semibold text-gray-800 mb-2">
 				Emploi:
 			</h3>
-			<ul class="list-disc list-inside space-y-1 text-gray-700">
+			<ul class="flex flex-col list-disc list-inside space-y-1 text-gray-700">
 				<li v-for="(jobId, index) in person.jobIds" :key="jobId">
 					<RouterLink :to="{ name: 'jobs', hash: `#job-${jobId}` }" class="underline">
 						{{ person.censusYears[index] }}: {{ data?.jobs[jobId]?.job || '—' }}
