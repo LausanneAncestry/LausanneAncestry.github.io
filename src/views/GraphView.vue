@@ -1,31 +1,33 @@
 <template>
-  <div class="chart-container">
-    <h2 class="chart-title">
-      Responsabilités Professionnelles
-    </h2>
-    <h3 class="chart-subtitle">
-      de la 2ème Génération par rapport à celles de la 1ère Génération
-    </h3>
-    <svg class="chart" ref="respSvgRef"></svg>
-  </div>
-  <div class="chart-container">
-    <h2 class="chart-title">
-      Durée de la Formation
-    </h2>
-    <h3 class="chart-subtitle">
-      de la 2ème Génération par rapport à celles de la 1ère Génération
-    </h3>
-    <svg class="chart" ref="trainSvgRef"></svg>
-  </div>
-  <div class="chart-container">
-    <h2 class="chart-title">
-      Physique du Travail
-    </h2>
-    <h3 class="chart-subtitle">
-      de la 2ème Génération par rapport à celles de la 1ère Génération
-    </h3>
-    <svg class="chart" ref="physSvgRef"></svg>
-  </div>
+  <main class="flex flex-col items-center">
+    <div class="chart-container flex flex-col items-center">
+      <h2 class="chart-title">
+        Responsabilités Professionnelles
+      </h2>
+      <h3 class="chart-subtitle">
+        de la 2ème Génération par rapport à celles de la 1ère Génération
+      </h3>
+      <svg class="chart" ref="respSvgRef"></svg>
+    </div>
+    <div class="chart-container flex flex-col items-center">
+      <h2 class="chart-title">
+        Durée de la Formation
+      </h2>
+      <h3 class="chart-subtitle">
+        de la 2ème Génération par rapport à celles de la 1ère Génération
+      </h3>
+      <svg class="chart" ref="trainSvgRef"></svg>
+    </div>
+    <div class="chart-container flex flex-col items-center">
+      <h2 class="chart-title">
+        Physique du Travail
+      </h2>
+      <h3 class="chart-subtitle">
+        de la 2ème Génération par rapport à celles de la 1ère Génération
+      </h3>
+      <svg class="chart" ref="physSvgRef"></svg>
+    </div>
+  </main>
 </template>
 
 
