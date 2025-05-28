@@ -116,6 +116,8 @@
           <li><b>Secteur:</b> 3 valeurs possibles: primaire, secondaire, tertiaire. Secteur primaire : produire ou
             extraire des matières premières. Secteur secondaire : prendre des matières premières et fabriquer des
             produits. Secteur tertiaire : industrie des services : aucun bien physique.</li>
+          <li><b>Catégorie:</b> 3 valeurs possibles: agriculture, journalier, propriétaire, commerce, éducation, industrie,
+            textile et cuir, artisanat, alimentation... Il s'agit d'un rafinement des secteurs.</li>
           <li><b>Tranche de Revenu estimé:</b> 3 valeurs possibles: bas, moyen ou élevé.</li>
         </ul>
         Chaque métier a été manuellement annoté selon ces critères en utilisant les ressources suivantes pour obtenir
@@ -136,7 +138,7 @@
         On peut voir une baisse du secteur primaire entre 1835 et 1855, qui se poursuit dans les années suivantes. Le
         tertiaire quant à lui, monte particulièrement à partir de 1890, tandis que le secondaire plafonne en 1874. Ces
         résultats montrent l’évolution de la ville à travers la révolution industrielle.
-
+        <br><br>
         Lorsqu'on se penche sur la mobilité sociale à travers le siècle, nous pouvons d'abord nous pencher sur ces mêmes
         secteurs. A partir de nos paires parent/enfant, nous pouvons donc construire la matrice de transformation
         suivante:
@@ -149,6 +151,16 @@
         primaire est plus importante que celle du secteur secondaire. Toutefois, le secteur tertiaire contient également
         bon nombre de métiers précaires et non pas des services nécessitant de grandes études, expliquant cette
         mobilité.
+        <br><br>
+        Pour affiner l'analyse, on peut séparer chaque secteur en sous catégorie. On sépare les journaliers et les métiers
+        de l'agriculture du secteur primaire. On partitionne le secteur secondaire en quatre domaines : bâtiment, 
+        cuir & textile, artisanat et alimentation. On identifie : éducation, commerce et transport pour le secteur tertiaire.
+        On sépare aussi les métiers du secteur tertiaire implicant une supériorité hiérarchique. à noter que les seuls métiers
+        annotés comme 'chef' qui ne se retrouvent pas dans la catégorie 'tertiare chef' sont: architecte (secondaire bâtiment),
+        chef d'équipe (secondaire industrie) et épicier (tertiaire commerce). On identifie aussi le groupe des propriétaires et
+        rentiers qui n'appartiennent pas directement à un secteur mais sont intéressants.
+        <img src="../assets/transitions_white.png" alt="Matrice de transition des sous divisions des secteurs">
+
         <br><br>
         Enfin, nous pouvons nous pencher sur des métiers spécifiques. A cette fin, nous avons choisis 3 métiers
         possèdent de nombreux individus dans nos paires parent/enfant, qui représentent la classe populaire
