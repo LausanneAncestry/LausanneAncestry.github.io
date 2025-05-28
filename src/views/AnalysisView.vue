@@ -116,7 +116,7 @@
           <li><b>Secteur:</b> 3 valeurs possibles: primaire, secondaire, tertiaire. Secteur primaire : produire ou
             extraire des matières premières. Secteur secondaire : prendre des matières premières et fabriquer des
             produits. Secteur tertiaire : industrie des services : aucun bien physique.</li>
-          <li><b>Catégorie:</b> 3 valeurs possibles: agriculture, journalier, propriétaire, commerce, éducation, industrie,
+          <li><b>Catégorie:</b> valeurs possibles: agriculture, journalier, propriétaire, commerce, éducation, industrie,
             textile et cuir, artisanat, alimentation... Il s'agit d'un rafinement des secteurs.</li>
           <li><b>Tranche de Revenu estimé:</b> 3 valeurs possibles: bas, moyen ou élevé.</li>
         </ul>
