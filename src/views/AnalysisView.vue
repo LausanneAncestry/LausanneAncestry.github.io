@@ -160,6 +160,12 @@
         chef d'équipe (secondaire industrie) et épicier (tertiaire commerce). On identifie aussi le groupe des propriétaires et
         rentiers qui n'appartiennent pas directement à un secteur mais sont intéressants.
         <img src="../assets/transitions_white.png" alt="Matrice de transition des sous divisions des secteurs">
+        à nouveau, on observe une forte reproduction sociale marquée par la diagonale. On remarque des liens intéressants entre
+        les propriétaires et le secteur tertiaire. Pratiquement aucune personne dont le parent vient du secteur primaire ne
+        devient propiétaire. Le commerce est l'activité du secteur tertiaire la plus connectée aux autres secteurs. Beaucoup d'enfants
+        dont le parent vient du secteur primaire se retrouve dans le secteur secondaire, en particulier le bâtiment, mais l'inverse
+        n'est pas le cas. Ceci est sans doute une conséquences de l'industrialisation de Lausanne et des grands changements au 19ème
+        siècle comme le voutage du Flon. 
 
         <br><br>
         Enfin, nous pouvons nous pencher sur des métiers spécifiques. A cette fin, nous avons choisis 3 métiers
